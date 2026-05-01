@@ -7,13 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0f172a',
-        surface: '#1e293b',
-        primary: '#3b82f6',
-        secondary: '#8b5cf6',
-        accent: '#f43f5e',
+        background: '#0a1128',
+        surface: 'rgba(28, 62, 107, 0.3)',
+        primary: '#0ea5e9',
+        secondary: '#1e40af',
+        accent: '#38bdf8',
         textMain: '#f8fafc',
-        textMuted: '#94a3b8'
+        textMuted: '#bae6fd'
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
