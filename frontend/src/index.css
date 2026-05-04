@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,53 +11,679 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {
   body {
-    @apply text-textMain font-sans antialiased selection:bg-primary/30 min-h-screen;
-    background-color: #050b14;
+    font-family: 'Crimson Text', 'Georgia', serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    background-color: #d4c5a9;
   }
 }
 
-@layer components {
-  .glass-panel {
-    @apply bg-surface backdrop-blur-md border-r border-white/5;
-  }
-  
-  .glass-card {
-    @apply bg-surface backdrop-blur-sm border border-white/5 rounded-2xl hover:border-white/10 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1;
-  }
-
-  .btn-primary {
-    @apply bg-textMain text-background font-medium py-2 px-6 rounded-full hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-white/10;
-  }
-  
-  .btn-secondary {
-    @apply bg-transparent border-2 border-textMuted text-textMuted font-medium py-2 px-6 rounded-full hover:border-textMain hover:text-textMain transition-all active:scale-95;
-  }
-
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-textMain to-textMuted;
-  }
-}
-
-/* Custom Scrollbar */
+/* Custom Scrollbar — parchment themed */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(139, 69, 19, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(186, 230, 253, 0.2);
+  background: rgba(139, 69, 19, 0.25);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(186, 230, 253, 0.4);
+  background: rgba(139, 69, 19, 0.4);
+}
+
+
+/* ══════════════════════════════════════════════
+   POSTAL / PARCHMENT UI THEME
+   ══════════════════════════════════════════════ */
+
+/* ── Text colors ── */
+.postal-text-dark {
+  color: #3e2a18;
+}
+
+.postal-text-muted {
+  color: #7a6348;
+}
+
+.postal-text-accent {
+  color: #8B0000;
+}
+
+/* ── Sidebar ── */
+.postal-sidebar {
+  background: rgba(62, 42, 24, 0.12);
+  border-right: 1px solid rgba(139, 69, 19, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+/* ── Wax Seal Buttons ── */
+.wax-seal {
+  width: 44px;
+  height: 44px;
+  /* Irregular, slightly organic shape */
+  border-radius: 48% 52% 47% 53% / 51% 47% 54% 49%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  border: none;
+
+  /* The wax seal look */
+  background: radial-gradient(circle at 35% 35%, #a0353a, #7b1a1f 60%, #5c0f14 100%);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(255, 100, 100, 0.3),
+    inset 0 -2px 6px rgba(40, 0, 0, 0.6);
+  color: rgba(255, 220, 210, 0.85);
+  z-index: 1;
+}
+
+/* Create the inner raised rim of the stamp */
+.wax-seal::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50% 48% 52% 50% / 49% 51% 48% 52%;
+  border: 1.5px solid rgba(139, 0, 0, 0.4);
+  box-shadow: 
+    inset 0 2px 3px rgba(40, 0, 0, 0.6),
+    0 1px 2px rgba(255, 100, 100, 0.2);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Add an uneven outer blob to make it look squished */
+.wax-seal::after {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 54% 46% 52% 48% / 47% 53% 45% 55%;
+  background: radial-gradient(circle at 40% 40%, #8b1a1f, #4a0a0e 100%);
+  z-index: -2;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+.wax-seal:hover {
+  transform: scale(1.1) rotate(-5deg);
+}
+.wax-seal:hover::after {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.wax-seal:active {
+  transform: scale(0.95);
+}
+
+.wax-seal--home {
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 35% 35%, #b03a3f, #8B1A1F 60%, #5c0f14 100%);
+}
+
+.wax-seal__letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(255, 230, 220, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.wax-seal--nav {
+  width: 42px;
+  height: 42px;
+}
+
+.wax-seal--active {
+  background: radial-gradient(circle at 35% 35%, #c4444a, #9b2227 60%, #6c1318 100%);
+  box-shadow:
+    0 3px 12px rgba(150, 30, 30, 0.5),
+    inset 0 1px 3px rgba(255, 200, 200, 0.35),
+    inset 0 -2px 4px rgba(40, 0, 0, 0.3);
+  color: rgba(255, 240, 230, 1);
+}
+
+.wax-seal--sm {
+  width: 36px;
+  height: 36px;
+}
+
+/* ── Header ── */
+.postal-header {
+  background: rgba(62, 42, 24, 0.08);
+  border-bottom: 1px solid rgba(139, 69, 19, 0.12);
+}
+
+/* ── Search ── */
+.postal-search-dropdown {
+  background: rgba(222, 204, 176, 0.95);
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(62, 42, 24, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.postal-search-input {
+  width: 260px;
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Crimson Text', serif;
+  font-size: 14px;
+  color: #3e2a18;
+}
+
+.postal-search-input::placeholder {
+  color: #9a8468;
+  font-style: italic;
+}
+
+/* ── Icon button ── */
+.postal-icon-btn {
+  color: #7a6348;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.postal-icon-btn:hover {
+  color: #3e2a18;
+}
+
+/* ── Page title ── */
+.postal-page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #3e2a18;
+  letter-spacing: 0.02em;
+}
+
+.postal-date {
+  font-size: 0.8rem;
+  color: #9a8468;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* ── Stamp button ── */
+.postal-stamp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-family: 'Crimson Text', serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 230, 220, 0.95);
+  background: radial-gradient(circle at 35% 35%, #a0353a, #7b1a1f 70%, #5c0f14 100%);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 2px 8px rgba(100, 20, 20, 0.3),
+    inset 0 1px 1px rgba(255, 200, 200, 0.15);
+}
+
+.postal-stamp-btn:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 4px 14px rgba(100, 20, 20, 0.4),
+    inset 0 1px 1px rgba(255, 200, 200, 0.2);
+}
+
+.postal-stamp-btn--outline {
+  background: transparent;
+  color: #7b1a1f;
+  border: 1px solid rgba(123, 26, 31, 0.3);
+  box-shadow: none;
+}
+
+.postal-stamp-btn--outline:hover {
+  background: rgba(123, 26, 31, 0.08);
+  border-color: rgba(123, 26, 31, 0.5);
+  box-shadow: none;
+}
+
+/* ── Email / Letter cards ── */
+.postal-card {
+  position: relative;
+  padding: 18px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Aged paper look */
+  background: rgba(240, 228, 206, 0.6);
+  border: 1px solid rgba(139, 69, 19, 0.12);
+  box-shadow: 0 2px 8px rgba(62, 42, 24, 0.08);
+}
+
+.postal-card:hover {
+  background: rgba(240, 228, 206, 0.85);
+  border-color: rgba(139, 69, 19, 0.2);
+  box-shadow: 0 4px 16px rgba(62, 42, 24, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Diagonal striped corner — like a postage feel */
+.postal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(139, 69, 19, 0.08) 3px,
+    rgba(139, 69, 19, 0.08) 6px
+  );
+  border-radius: 0 4px 0 0;
+}
+
+/* ── Category badges — ink stamp style ── */
+.postal-category-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1.5px solid;
+  transform: rotate(-2deg);
+}
+
+.postal-cat-assignment {
+  color: #8B0000;
+  border-color: #8B0000;
+  background: rgba(139, 0, 0, 0.06);
+}
+
+.postal-cat-job {
+  color: #2E5339;
+  border-color: #2E5339;
+  background: rgba(46, 83, 57, 0.06);
+}
+
+.postal-cat-event {
+  color: #4A3E8A;
+  border-color: #4A3E8A;
+  background: rgba(74, 62, 138, 0.06);
+}
+
+/* ── Tooltips ── */
+.postal-tooltip {
+  background: rgba(222, 204, 176, 0.95);
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 8px 30px rgba(62, 42, 24, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.postal-tooltip-simple {
+  font-size: 12px;
+  font-family: 'Crimson Text', serif;
+  color: #3e2a18;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(222, 204, 176, 0.95);
+  border: 1px solid rgba(139, 69, 19, 0.15);
+  box-shadow: 0 4px 12px rgba(62, 42, 24, 0.15);
+}
+
+
+/* ══════════════════════════════════════════════
+   ENVELOPE LANDING SCREEN
+   ══════════════════════════════════════════════ */
+
+.envelope-landing {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #2c2520;
+  cursor: pointer;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  z-index: 30;
+}
+
+.envelope-landing--fading {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* ── The envelope container ── */
+.letter-image {
+  position: relative;
+  width: 360px;
+  height: 360px;
+}
+
+.animated-mail {
+  position: absolute;
+  height: 270px;
+  width: 360px;
+  transition: 0.4s;
+}
+
+/* Back fold (the rectangle behind everything) */
+.animated-mail .back-fold {
+  position: absolute;
+  bottom: 0;
+  width: 360px;
+  height: 180px;
+  background: #cf4a43;
+  z-index: 0;
+}
+
+/* Front body (bottom triangle) */
+.animated-mail .body {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 180px 360px;
+  border-color: transparent transparent #e95f55 transparent;
+  z-index: 2;
+}
+
+/* Top fold / flap */
+.animated-mail .top-fold {
+  position: absolute;
+  top: 90px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 90px 180px 0 180px;
+  transform-origin: 50% 0%;
+  transition: transform 0.4s 0.4s, z-index 0.2s 0.4s;
+  border-color: #cf4a43 transparent transparent transparent;
+  z-index: 2;
+}
+
+/* Left fold */
+.animated-mail .left-fold {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 90px 0 90px 180px;
+  border-color: transparent transparent transparent #e15349;
+  z-index: 2;
+}
+
+/* ── The letter that slides up ── */
+.animated-mail .letter {
+  left: 36px;
+  bottom: 0;
+  position: absolute;
+  width: 288px;
+  height: 108px;
+  background: white;
+  z-index: 1;
+  overflow: hidden;
+  transition: 0.4s 0.2s;
+  border-radius: 4px;
+}
+
+.animated-mail .letter .letter-border {
+  height: 18px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    #cb5a5e,
+    #cb5a5e 8px,
+    transparent 8px,
+    transparent 18px
+  );
+}
+
+.animated-mail .letter .letter-title {
+  margin-top: 18px;
+  margin-left: 10px;
+  height: 14px;
+  width: 40%;
+  background: #cb5a5e;
+  border-radius: 2px;
+}
+
+.animated-mail .letter .letter-context {
+  margin-top: 14px;
+  margin-left: 10px;
+  height: 14px;
+  width: 20%;
+  background: #cb5a5e;
+  border-radius: 2px;
+}
+
+.animated-mail .letter .letter-stamp {
+  margin-top: 30px;
+  margin-left: 210px;
+  border-radius: 100%;
+  height: 54px;
+  width: 54px;
+  background: #cb5a5e;
+  opacity: 0.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animated-mail .letter .letter-stamp .letter-stamp-inner {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  opacity: 0.8;
+}
+
+/* ── Shadow below envelope ── */
+.shadow {
+  position: absolute;
+  top: 360px;
+  left: 50%;
+  width: 500px;
+  height: 40px;
+  transition: 0.4s;
+  transform: translateX(-50%);
+  border-radius: 100%;
+  background: radial-gradient(
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+/* ── Hover state — preview open ── */
+.letter-image:hover .animated-mail {
+  transform: translateY(50px);
+}
+
+.letter-image:hover .animated-mail .top-fold {
+  transition: transform 0.4s, z-index 0.2s;
+  transform: rotateX(180deg);
+  z-index: 0;
+}
+
+.letter-image:hover .animated-mail .letter {
+  height: 320px;
+}
+
+.letter-image:hover .shadow {
+  width: 320px;
+}
+
+/* ── Clicked / opened state (locks open) ── */
+.letter-image--opened .animated-mail {
+  transform: translateY(50px);
+}
+
+.letter-image--opened .animated-mail .top-fold {
+  transition: transform 0.4s, z-index 0.2s;
+  transform: rotateX(180deg);
+  z-index: 0;
+}
+
+.letter-image--opened .animated-mail .letter {
+  height: 320px;
+}
+
+.letter-image--opened .shadow {
+  width: 320px;
+}
+
+/* ── Hint text ── */
+.envelope-hint {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.envelope-hint span {
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 300;
+}
+
+.envelope-hint--hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+}
+
+/* ── Interactive Letter Modal ── */
+.letter-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(44, 37, 32, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.letter-modal {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  height: 80vh;
+  max-height: 800px;
+  background: #f4ebd8;
+  box-shadow: 
+    0 20px 50px rgba(0,0,0,0.5),
+    inset 0 0 40px rgba(139, 69, 19, 0.1);
+  border: 1px solid rgba(139, 69, 19, 0.2);
+  transform-style: preserve-3d;
+  animation: unfoldLetter 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  background-image: url("/parchment.png");
+  background-blend-mode: overlay;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes unfoldLetter {
+  0% {
+    transform: perspective(1000px) rotateX(-90deg) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: perspective(1000px) rotateX(10deg) scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: perspective(1000px) rotateX(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.letter-modal-header {
+  padding: 30px 40px 20px;
+  border-bottom: 2px solid rgba(139, 69, 19, 0.1);
+  position: relative;
+}
+
+.letter-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #8B0000;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.letter-modal-close:hover {
+  transform: scale(1.1);
+}
+
+.letter-modal-content {
+  padding: 30px 40px;
+  overflow-y: auto;
+  font-family: 'Crimson Text', serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #3e2a18;
+  flex: 1;
+}
+
+.letter-modal-stamp {
+  position: absolute;
+  bottom: 20px;
+  right: 40px;
+  width: 60px;
+  height: 60px;
+  border: 3px solid #8B0000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8B0000;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 24px;
+  opacity: 0.6;
+  transform: rotate(-15deg);
 }
