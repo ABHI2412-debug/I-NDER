@@ -1,395 +1,311 @@
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  LayoutDashboard, Mail, Calendar, Briefcase,
-  Settings, Bell, Search, X, Cpu
+  AlertTriangle,
+  Bell,
+  Briefcase,
+  CalendarDays,
+  CheckCircle2,
+  CircleHelp,
+  Clock,
+  FileText,
+  Home,
+  Inbox,
+  Mail,
+  Landmark,
+  Leaf,
+  Menu,
+  MoreVertical,
+  PartyPopper,
+  Search,
+  Settings,
+  Shield,
+  Sparkles,
+  Trees,
+  Umbrella,
+  User,
+  Users,
 } from 'lucide-react';
 
-const mockEmails = [
-  { id: 1, subject: 'Action Required: Submit Final Project', sender: 'prof.smith@university.edu', category: 'Assignment', deadline: '2026-05-15', snippet: 'Please ensure your final project files are uploaded by the deadline.' },
-  { id: 2, subject: 'Google Software Engineering Intern – Fall 2026', sender: 'careers@google.com', category: 'Job', deadline: '2026-06-01', snippet: 'We are thrilled to invite you to the next steps of the interview process.' },
-  { id: 3, subject: 'Tech Talk: The Future of AI', sender: 'cs-dept@university.edu', category: 'Event', deadline: '2026-05-05', snippet: 'Join us for an exciting discussion on the future of AI and LLMs.' },
+const sidebarIcons = [
+  { label: 'Menu', Icon: Menu },
+  { label: 'Home', Icon: Home },
+  { label: 'Inbox', Icon: Inbox },
+  { label: 'Calendar', Icon: CalendarDays },
+  { label: 'Profile', Icon: User },
+  { label: 'Security', Icon: Shield },
+  { label: 'Envelope', Icon: Mail },
+  { label: 'Reminders', Icon: Bell },
+  { label: 'Settings', Icon: Settings },
+  { label: 'Help', Icon: CircleHelp },
 ];
 
-const navItems = [
-  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { id: 'inbox', icon: Mail, label: 'Smart Inbox' },
-  { id: 'assignments', icon: Calendar, label: 'Assignments' },
-  { id: 'jobs', icon: Briefcase, label: 'Opportunities' },
-  { id: 'settings', icon: Settings, label: 'Settings' },
+const quickIcons = [
+  { label: 'Ideas', Icon: Leaf },
+  { label: 'Weather', Icon: Umbrella },
+  { label: 'Focus', Icon: Sparkles },
+  { label: 'Campus', Icon: Landmark },
 ];
 
-/* ── Envelope Landing Screen ── */
-function EnvelopeLanding({ onEnter }: { onEnter: () => void }) {
-  const [opened, setOpened] = useState(false);
-  const [fading, setFading] = useState(false);
+const scheduleItems = [
+  { title: 'OS Assignment', time: '03:50 PM', Icon: FileText, tone: 'gold' },
+  { title: 'Tech Talk', time: '06:35 PM', Icon: PartyPopper, tone: 'blue' },
+  { title: 'Internship', time: '10:25 PM', Icon: Briefcase, tone: 'stone' },
+  { title: 'AI Brief', time: '11:45 PM', Icon: Sparkles, tone: 'sun' },
+];
 
-  const handleClick = () => {
-    if (opened) return;
-    setOpened(true);
-    // After the envelope open animation plays, fade out and enter dashboard
-    setTimeout(() => setFading(true), 1200);
-    setTimeout(() => onEnter(), 2000);
-  };
+const holidayItems = [
+  { name: 'Final Project', amount: 'May 15', icon: 'A', action: 'View' },
+  { name: 'Google Intern', amount: 'Jun 01', icon: 'J', action: 'View' },
+  { name: 'AI Tech Talk', amount: 'Today', icon: 'E', action: 'View', hot: true },
+];
 
-  return (
-    <div
-      className={`envelope-landing ${fading ? 'envelope-landing--fading' : ''}`}
-      onClick={handleClick}
-    >
-      {/* The envelope container — hover opens, click enters */}
-      <div className={`letter-image ${opened ? 'letter-image--opened' : ''}`}>
-        <div className="animated-mail">
-          <div className="back-fold" />
-          <div className="letter">
-            <div className="letter-border" />
-            <div className="letter-title" />
-            <div className="letter-context" />
-            <div className="letter-stamp">
-              <div className="letter-stamp-inner">A</div>
-            </div>
-          </div>
-          <div className="top-fold" />
-          <div className="body" />
-          <div className="left-fold" />
-        </div>
-        <div className="shadow" />
-      </div>
-
-      {/* Hint text */}
-      <div className={`envelope-hint ${opened ? 'envelope-hint--hidden' : ''}`}>
-        <span>click to open</span>
-      </div>
-    </div>
-  );
-}
+const priorityTasks = [
+  { label: 'Submit final project files', meta: 'Assignment', status: 'At Risk', Icon: AlertTriangle },
+  { label: 'Prepare Google interview notes', meta: 'Opportunity', status: 'On Track', Icon: CheckCircle2 },
+  { label: 'Read AI event invite', meta: 'Event', status: 'Today', Icon: Clock },
+];
 
 function App() {
   const [entered, setEntered] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedEmail, setSelectedEmail] = useState<any>(null);
+  const [activeNav, setActiveNav] = useState('Home');
+  const [query, setQuery] = useState('');
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [activeQuick, setActiveQuick] = useState('Ideas');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState('OS Assignment');
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [toast, setToast] = useState('Welcome back, Alex');
+
+  const searchMatches = useMemo(() => {
+    const allItems = [...scheduleItems.map((item) => item.title), ...priorityTasks.map((item) => item.label), ...holidayItems.map((item) => item.name)];
+    return allItems.filter((item) => item.toLowerCase().includes(query.toLowerCase())).slice(0, 4);
+  }, [query]);
+
+  const showToast = (message: string) => {
+    setToast(message);
+    window.setTimeout(() => setToast(''), 1800);
+  };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden font-serif">
-
-      {/* ── Parchment background ── */}
-      <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url("/parchment.png")' }}
-      />
-      {/* Subtle vignette overlay */}
-      <div className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(60,40,20,0.3) 100%)',
-        }}
-      />
-
-      {/* ────────────────────────────────────────────
-          ENVELOPE LANDING SCREEN
-      ──────────────────────────────────────────── */}
-      <div
-        className="absolute inset-0 z-30 flex flex-col items-center justify-center transition-all duration-700 ease-in-out"
-        style={{
-          opacity: entered ? 0 : 1,
-          pointerEvents: entered ? 'none' : 'all',
-        }}
-      >
-        <EnvelopeLanding key={entered ? 'entered' : 'home'} onEnter={() => setEntered(true)} />
-      </div>
-
-      {/* ────────────────────────────────────────────
-          MAIN APP — vintage postal dashboard
-      ──────────────────────────────────────────── */}
-      <div
-        className="absolute inset-0 z-20 flex transition-all duration-700 ease-in-out"
-        style={{
-          opacity: entered ? 1 : 0,
-          transform: entered ? 'translateY(0)' : 'translateY(100%)',
-          pointerEvents: entered ? 'all' : 'none',
-        }}
-      >
-
-        {/* ── Left Sidebar — Wax Seal Navigation ── */}
-        <aside className="postal-sidebar relative flex flex-col items-center justify-between py-6 w-20 shrink-0">
-
-          {/* Home seal */}
+    <>
+      {!entered && <LandingPage onEnter={() => setEntered(true)} />}
+      <main className={`blank-start-screen ${entered ? 'is-entered' : ''}`} aria-label="Dashboard">
+      <nav className="blank-sidebar" aria-label="Primary navigation">
+        {sidebarIcons.map(({ label, Icon }) => (
           <button
-            onClick={() => setEntered(false)}
-            title="Back to Home"
-            className="wax-seal wax-seal--home"
+            key={label}
+            className={`blank-sidebar-button ${activeNav === label ? 'is-active' : ''}`}
+            type="button"
+            aria-label={label}
+            title={label}
+            onClick={() => {
+              if (label === 'Envelope') {
+                setEntered(false);
+                setActiveNav('Home');
+                return;
+              }
+              setActiveNav(label);
+              showToast(`${label} selected`);
+            }}
           >
-            <span className="wax-seal__letter">A</span>
+            <Icon size={22} strokeWidth={2.5} />
           </button>
-
-          {/* Nav seals */}
-          <nav className="flex flex-col items-center gap-3">
-            {navItems.slice(0, 4).map((item) => (
-              <SealBtn
-                key={item.id}
-                icon={item.icon}
-                label={item.label}
-                active={activeTab === item.id}
-                onClick={() => setActiveTab(item.id)}
-              />
-            ))}
-          </nav>
-
-          {/* Bottom seals */}
-          <div className="flex flex-col items-center gap-3">
-            <SealBtn icon={Cpu} label="AI Brief" tooltip={<AiBrief />} />
-            <SealBtn icon={Bell} label="Reminders" tooltip={<Reminders />} />
-            <SealBtn icon={Settings} label="Settings" onClick={() => setActiveTab('settings')} />
-          </div>
-        </aside>
-
-        {/* ── Main Area ── */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-
-          {/* Header bar — parchment strip */}
-          <header className="postal-header h-14 flex items-center justify-between px-8 shrink-0 z-10">
-            {/* Search stamp */}
-            <div className="relative">
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="wax-seal wax-seal--sm"
-                title="Search"
-              >
-                <Search size={14} />
-              </button>
-              {/* Search dropdown */}
-              {searchOpen && (
-                <div className="absolute top-12 left-0 z-50 postal-search-dropdown">
-                  <input
-                    type="text"
-                    placeholder="Search your letters…"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoFocus
-                    className="postal-search-input"
-                  />
-                </div>
-              )}
+        ))}
+      </nav>
+      <section className="blank-main-layer" aria-label="Main layout layer">
+        <div className="blank-topbar" aria-label="Top controls">
+          <button
+            className={`blank-notification ${notificationsOpen ? 'is-active' : ''}`}
+            type="button"
+            aria-label="Notifications"
+            onClick={() => setNotificationsOpen((open) => !open)}
+          >
+            <Bell size={20} fill="currentColor" strokeWidth={0} />
+            <span aria-hidden="true" />
+          </button>
+          <label className="blank-search">
+            <Search size={20} strokeWidth={2.4} />
+            <input
+              type="search"
+              placeholder="Search.."
+              aria-label="Search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </label>
+          {notificationsOpen && (
+            <div className="notification-popover">
+              <strong>3 new reminders</strong>
+              <p>Final project is due May 15</p>
+              <p>Tech talk starts today</p>
             </div>
-
-            {/* Profile */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setEntered(false)}
-                className="postal-icon-btn"
-                title="Back to landing"
-              >
-                <X size={14} />
-              </button>
-              <div className="text-right">
-                <p className="text-xs font-semibold postal-text-dark">Alex Student</p>
-                <p className="text-[10px] postal-text-muted" style={{ fontStyle: 'italic' }}>CS Major</p>
-              </div>
-              <img
-                src="https://i.pravatar.cc/150?img=11"
-                alt="Profile"
-                className="w-8 h-8 rounded-full border-2"
-                style={{ borderColor: '#8B4513' }}
-              />
+          )}
+          {query && (
+            <div className="search-popover">
+              {searchMatches.length ? searchMatches.map((item) => (
+                <button key={item} type="button" onClick={() => showToast(`${item} opened`)}>{item}</button>
+              )) : <p>No matches found</p>}
             </div>
-          </header>
-
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto px-10 py-8">
-            <div className="max-w-3xl mx-auto space-y-8 animate-slideUp">
-
-              {/* Page title — handwritten feel */}
-              <div>
-                <h2 className="postal-page-title">
-                  {navItems.find(n => n.id === activeTab)?.label ?? 'Dashboard'}
-                </h2>
-                <p className="postal-date">
-                  {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-                </p>
-              </div>
-
-              {/* Sync Gmail — stamp style */}
-              <div className="flex items-center justify-between">
-                <p className="text-sm postal-text-dark">
-                  <span className="postal-text-accent font-semibold">3 deadlines</span> arriving this week
-                </p>
-                <button className="postal-stamp-btn">
-                  <Mail size={12} />
-                  Sync Gmail
-                </button>
-              </div>
-
-              {/* Email feed — letter cards */}
-              <div className="space-y-4">
-                {mockEmails.map((email) => (
-                  <div
-                    key={email.id}
-                    className="postal-card group"
-                    onClick={() => setSelectedEmail(email)}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className={`postal-category-badge postal-cat-${email.category.toLowerCase()}`}>
-                          {email.category}
-                        </span>
-                        {email.deadline && (
-                          <span className="text-[11px] postal-text-muted flex items-center gap-1">
-                            <Calendar size={10} />
-                            {new Date(email.deadline).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[10px] postal-text-muted italic">2h ago</span>
-                    </div>
-                    <h4 className="text-sm font-semibold postal-text-dark mb-1">
-                      {email.subject}
-                    </h4>
-                    <p className="text-xs postal-text-muted line-clamp-1">{email.snippet}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* View all */}
-              <div className="text-center">
-                <button className="postal-stamp-btn postal-stamp-btn--outline">
-                  View all correspondence →
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ────────────────────────────────────────────
-          INTERACTIVE LETTER MODAL
-      ──────────────────────────────────────────── */}
-      {selectedEmail && (
-        <div className="letter-modal-backdrop" onClick={() => setSelectedEmail(null)}>
-          <div className="letter-modal" onClick={e => e.stopPropagation()}>
-            <div className="letter-modal-header">
-              <button className="letter-modal-close" onClick={() => setSelectedEmail(null)}>
-                <X size={24} />
-              </button>
-              <div className="flex items-center gap-3 mb-4">
-                <span className={`postal-category-badge postal-cat-${selectedEmail.category.toLowerCase()}`}>
-                  {selectedEmail.category}
-                </span>
-                <span className="text-sm postal-text-muted italic">{selectedEmail.sender}</span>
-              </div>
-              <h2 className="text-2xl font-bold postal-text-dark font-serif leading-tight">
-                {selectedEmail.subject}
-              </h2>
-              {selectedEmail.deadline && (
-                <p className="text-sm postal-text-accent mt-2 flex items-center gap-1 font-semibold">
-                  <Calendar size={14} />
-                  Deadline: {new Date(selectedEmail.deadline).toLocaleDateString()}
-                </p>
-              )}
-            </div>
-            
-            <div className="letter-modal-content">
-              <p>Dear Alex,</p>
-              <br/>
-              <p>{selectedEmail.snippet}</p>
-              <br/>
-              <p>We look forward to hearing from you soon. Please make sure to review all attached documents and reach out if you have any questions.</p>
-              <br/>
-              <p>Warm regards,</p>
-              <p className="font-bold">{selectedEmail.sender.split('@')[0].replace('.', ' ')}</p>
-              
-              <div className="letter-modal-stamp">
-                {selectedEmail.category.charAt(0)}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
-}
-
-/* ── Wax Seal Sidebar Button ── */
-function SealBtn({
-  icon: Icon, label, active, onClick, tooltip
-}: {
-  icon: React.ElementType;
-  label: string;
-  active?: boolean;
-  onClick?: () => void;
-  tooltip?: React.ReactNode;
-}) {
-  const [showTip, setShowTip] = useState(false);
-
-  return (
-    <div className="relative">
-      <button
-        onClick={onClick}
-        onMouseEnter={() => setShowTip(true)}
-        onMouseLeave={() => setShowTip(false)}
-        className={`wax-seal wax-seal--nav ${active ? 'wax-seal--active' : ''}`}
-        title={label}
-      >
-        <Icon size={16} />
-      </button>
-
-      {/* Tooltip panel */}
-      {showTip && (
-        <div className="absolute left-16 top-1/2 -translate-y-1/2 z-50 pointer-events-none">
-          {tooltip ? (
-            <div className="postal-tooltip w-64">
-              {tooltip}
-            </div>
-          ) : (
-            <span className="postal-tooltip-simple">
-              {label}
-            </span>
           )}
         </div>
-      )}
-    </div>
-  );
-}
-
-/* ── AI Brief tooltip content ── */
-function AiBrief() {
-  return (
-    <div className="space-y-2">
-      <p className="text-[11px] font-semibold postal-text-dark uppercase tracking-widest mb-3">AI Daily Brief</p>
-      <p className="text-xs postal-text-dark leading-relaxed">
-        You received <span className="font-bold">14 letters</span> today. Found <span className="postal-text-accent font-bold">1 new opportunity</span> matching your profile. Next deadline is <span style={{ color: '#8B0000' }} className="font-bold">tomorrow</span>.
-      </p>
-      <button className="mt-3 w-full text-[10px] postal-stamp-btn postal-stamp-btn--outline">
-        Read full summary
-      </button>
-    </div>
-  );
-}
-
-/* ── Reminders tooltip content ── */
-function Reminders() {
-  const items = [
-    { label: 'OS Assignment 4', sub: 'Due in 12 hours', dot: '#8B0000' },
-    { label: 'Google Intern Application', sub: 'Closes tomorrow', dot: '#2E5339' },
-  ];
-  return (
-    <div className="space-y-2">
-      <p className="text-[11px] font-semibold postal-text-dark uppercase tracking-widest mb-3">Reminders</p>
-      {items.map((r) => (
-        <div key={r.label} className="flex items-start gap-2.5 py-2"
-          style={{ borderBottom: '1px solid rgba(139,69,19,0.15)' }}>
-          <div className="mt-1 w-2 h-2 rounded-full shrink-0" style={{ background: r.dot }} />
-          <div>
-            <p className="text-xs postal-text-dark font-medium">{r.label}</p>
-            <p className="text-[10px] postal-text-muted mt-0.5 italic">{r.sub}</p>
+        <aside className="blank-right-layer" aria-label="Right content layer" />
+        <section className="dashboard-content" aria-label="Dashboard content">
+          <div className="hero-row">
+            <article className="autumn-card">
+              <div className="autumn-scene" aria-hidden="true">
+                <div className="scene-sky" />
+                <div className="scene-sun" />
+                <div className="scene-dog">A</div>
+                <div className="scene-person" />
+              </div>
+              <div className="autumn-footer">
+                <div>
+                  <h1>Autumn day</h1>
+                  <p>Hello Alex</p>
+                </div>
+                <button type="button" aria-label="More options" onClick={() => setMenuOpen((open) => !open)}>
+                  <MoreVertical size={28} />
+                </button>
+                {menuOpen && (
+                  <div className="hero-menu">
+                    <button type="button" onClick={() => showToast('Event plan opened')}>Open plan</button>
+                    <button type="button" onClick={() => showToast('Schedule synced')}>Sync schedule</button>
+                  </div>
+                )}
+              </div>
+            </article>
+            <div className="quick-stack" aria-label="Quick filters">
+              {quickIcons.map(({ label, Icon }) => (
+                <button
+                  key={label}
+                  className={`quick-button ${activeQuick === label ? 'is-active' : ''}`}
+                  type="button"
+                  aria-label={label}
+                  title={label}
+                  onClick={() => {
+                    setActiveQuick(label);
+                    showToast(`${label} filter active`);
+                  }}
+                >
+                  <Icon size={24} />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-      <button className="mt-2 w-full text-[10px] postal-stamp-btn postal-stamp-btn--outline">
-        + Add reminder
-      </button>
-    </div>
+
+          <section className="day-schedule" aria-label="Day schedule">
+            <h2><strong>Day</strong> Schedule</h2>
+            <div className="schedule-grid">
+              {scheduleItems.map(({ title, time, Icon, tone }) => (
+                <button
+                  key={title}
+                  className={`schedule-card ${selectedSchedule === title ? 'is-active' : ''}`}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSchedule(title);
+                    showToast(`${title} selected`);
+                  }}
+                >
+                  <div className={`schedule-art schedule-art-${tone}`}>
+                    <Icon size={34} />
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{time}</p>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="priority-strip" aria-label="Priority tasks">
+            {priorityTasks.map(({ label, meta, status, Icon }) => (
+              <button
+                key={label}
+                className={`priority-item ${completedTasks.includes(label) ? 'is-complete' : ''}`}
+                type="button"
+                onClick={() => {
+                  setCompletedTasks((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
+                  showToast(completedTasks.includes(label) ? `${label} restored` : `${label} marked done`);
+                }}
+              >
+                <Icon size={20} />
+                <div>
+                  <h3>{label}</h3>
+                  <p>{meta}</p>
+                </div>
+                <span>{completedTasks.includes(label) ? 'Done' : status}</span>
+              </button>
+            ))}
+          </section>
+        </section>
+
+        <section className="right-panel-content" aria-label="Profile and upcoming items">
+          <div className="profile-card">
+            <div className="avatar">AS</div>
+            <div>
+              <h2>Alex</h2>
+              <p>CS Major</p>
+              <button type="button" onClick={() => showToast('Profile summary opened')}>Read more</button>
+            </div>
+          </div>
+
+          <section className="holidays-list" aria-label="Upcoming deadlines">
+            <h2><strong>May</strong> Deadlines</h2>
+            {holidayItems.map((item) => (
+              <article key={item.name}>
+                <div className="mini-art">{item.icon}</div>
+                <div>
+                  <p>{item.name}</p>
+                  <strong>{item.amount}</strong>
+                </div>
+                <button className={item.hot ? 'hot' : ''} type="button" onClick={() => showToast(`${item.name} opened`)}>{item.action}</button>
+              </article>
+            ))}
+          </section>
+
+          <section className="planning-strip" aria-label="Study planning">
+            <h2><strong>Study</strong> planning</h2>
+            <div>
+              <button type="button" onClick={() => showToast('Tasks opened')}><Trees size={32} /><span>Tasks</span></button>
+              <button type="button" onClick={() => showToast('Team opened')}><Users size={32} /><span>Team</span></button>
+              <button type="button" onClick={() => showToast('Events opened')}><CalendarDays size={32} /><span>Events</span></button>
+            </div>
+          </section>
+        </section>
+        {toast && <output className="dashboard-toast">{toast}</output>}
+      </section>
+      </main>
+    </>
   );
 }
 
 export default App;
+
+function LandingPage({ onEnter }: { onEnter: () => void }) {
+  const [opened, setOpened] = useState(false);
+
+  const openEnvelope = () => {
+    if (opened) return;
+    setOpened(true);
+    window.setTimeout(onEnter, 1350);
+  };
+
+  return (
+    <section className={`landing-screen ${opened ? 'is-opening' : ''}`} aria-label="Landing page">
+      <button className="landing-envelope" type="button" onClick={openEnvelope} aria-label="Open envelope">
+        <span className="landing-envelope-shadow" />
+        <span className="landing-mail">
+          <span className="landing-letter">
+            <span />
+            <span />
+            <strong>A</strong>
+          </span>
+          <span className="landing-back" />
+          <span className="landing-flap" />
+          <span className="landing-body" />
+          <span className="landing-left-fold" />
+        </span>
+      </button>
+      <p>click to open</p>
+    </section>
+  );
+}
